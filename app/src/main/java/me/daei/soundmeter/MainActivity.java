@@ -1,5 +1,6 @@
 package me.daei.soundmeter;
 
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     float volume = 10000;
     private SoundDiscView soundDiscView;
     private MyMediaRecorder mRecorder;
+    private MediaPlayer mp;
     private static final int msgWhat = 0x1001;
     private static final int refreshTime = 100;
 
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mRecorder = new MyMediaRecorder();
+        mp = MediaPlayer.create(this, R.raw.bellringing);
     }
 
 
@@ -38,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
             if(volume > 0 && volume < 1000000) {
                 World.setDbCount(20 * (float)(Math.log10(volume)));  //将声压值转为分贝值
                 soundDiscView.refresh();
+                if (volume > 5000){
+                    mp.start();
+                }
             }
             handler.sendEmptyMessageDelayed(msgWhat, refreshTime);
         }
