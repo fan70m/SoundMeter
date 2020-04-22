@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private SoundDiscView soundDiscView;
     private MyMediaRecorder mRecorder;
     private MediaPlayer mp;
+    private int db_limit = 90;
     private static final int msgWhat = 0x1001;
     private static final int refreshTime = 100;
 
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             if(volume > 0 && volume < 1000000) {
                 World.setDbCount(20 * (float)(Math.log10(volume)));  //将声压值转为分贝值
                 soundDiscView.refresh();
-                if (volume > 5000){
+                if (World.dbCount > db_limit){
                     mp.start();
                 }
             }
