@@ -6,6 +6,9 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
@@ -18,9 +21,11 @@ public class MainActivity extends AppCompatActivity {
     private SoundDiscView soundDiscView;
     private MyMediaRecorder mRecorder;
     private MediaPlayer mp;
-    private int db_limit = 90;
+    private int dbLimit = 90;
     private static final int msgWhat = 0x1001;
     private static final int refreshTime = 100;
+    EditText newDbLimit;
+    Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +33,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mRecorder = new MyMediaRecorder();
         mp = MediaPlayer.create(this, R.raw.bellringing);
+        newDbLimit = (EditText) findViewById(R.id.textInput);
+        btn = (Button) findViewById(R.id.button);
+        btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String str = newDbLimit.getText().toString();
+                try
+                {
+                    int i = Integer.parseInt(str.trim());
+                    dbLimit = i;
+                    String s_msg = Integer.toString(i);
+                    Toast msg = Toast.makeText(getBaseContext(),s_msg,Toast.LENGTH_LONG);
+                    msg.show();
+                }
+                catch (NumberFormatException nfe)
+                {
+                    String s_msg = "Not an Int";
+                    Toast msg = Toast.makeText(getBaseContext(),s_msg,Toast.LENGTH_LONG);
+                    msg.show();
+                }
+                newDbLimit.getText().clear();
+            }
+        });
     }
+
 
 
     private Handler handler = new Handler() {
@@ -42,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             if(volume > 0 && volume < 1000000) {
                 World.setDbCount(20 * (float)(Math.log10(volume)));  //将声压值转为分贝值
                 soundDiscView.refresh();
-                if (World.dbCount > db_limit){
+                if (World.dbCount > dbLimit){
                     mp.start();
                 }
             }
